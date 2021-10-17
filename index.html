@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+          integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+          crossorigin="anonymous"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/logo/favicon-32x32.png" type="image/gif" sizes="16x16">
+    <title>Mp3 App Demo</title>
+</head>
+<body>
+<div class="player">
+    <!-- Dashboard -->
+    <div class="dashboard">
+        <!-- Header -->
+        <header>
+            <h4>Now playing:</h4>
+            <h2>String 57th & 9th</h2>
+        </header>
+
+        <!-- CD -->
+        <div class="cd">
+            <div class="cd-thumb" style="background-image: url('https://i.ytimg.com/vi/jTLhQf5KJSc/maxresdefault.jpg')">
+            </div>
+        </div>
+
+        <!-- Control -->
+        <div class="control">
+            <div class="btn btn-repeat">
+                <i class="fas fa-redo"></i>
+            </div>
+            <div class="btn btn-prev">
+                <i class="fas fa-step-backward"></i>
+            </div>
+            <div class="btn btn-toggle-play">
+                <i class="fas fa-pause icon-pause"></i>
+                <i class="fas fa-play icon-play"></i>
+            </div>
+            <div class="btn btn-next">
+                <i class="fas fa-step-forward"></i>
+            </div>
+            <div class="btn btn-random">
+                <i class="fas fa-random"></i>
+            </div>
+        </div>
+
+        <input id="progress" class="progress" type="range" value="0" step="1" min="0" max="100">
+
+        <audio id="audio" src=""></audio>
+    </div>
+
+    <!-- Playlist -->
+    <div class="playlist">
+    </div>
+</div>
+<script type="text/javascript">
+    /* Các chức năng
+    * 1. Render songs => done
+    * 2. Scroll top => done
+    * 3. Play/ pause /seek
+    * 4. CD rotate
+    * 5. Next-preview
+    * 6. Random
+    * 7. Next repeat when end
+    * 8. Active song
+    * 9. Scroll active song into view
+    * 10. Play song when click
+    * */
+    const $ = document.querySelector.bind(document);
+    const playlist = $('.playlist');
+    const cd = $('.cd');
+    const cdThumb = $('.cd-thumb');
+    const audio = $('#audio');
+    const playBtn = $('.btn-toggle-play');
+    const app = {
+        currentIndex: 0,
+        isPlaying: false,
+        songs: [
+            {
+                name: 'Bai 1',
+                singer: 'singer 1',
+                path: './assets/music/Blank_Disfigure.mp3',
+                img: './assets/img/1.jpg'
+            },
+            {
+                name: 'Bai 2',
+                singer: 'singer 2',
+                path: './assets/music/CandylandTobu.mp3',
+                img: './assets/img/2.jpg'
+            },
+            {
+                name: 'Bai 3',
+                singer: 'singer 3',
+                path: './assets/music/Cloud9Itro_Tobu.mp3',
+                img: './assets/img/3.jpg'
+            },
+            {
+                name: 'Bai 4',
+                singer: 'singer 4',
+                path: './assets/music/ColorsTobu.mp3',
+                img: './assets/img/4.jpg'
+            },
+            {
+                name: 'Bai 5',
+                singer: 'singer 5',
+                path: './assets/music/FlyAwayTheFatRat_Anjulie.mp3',
+                img: './assets/img/5.jpg'
+            },
+            {
+                name: 'Bai 6',
+                singer: 'singer 6',
+                path: './assets/music/HopeTobu.mp3',
+                img: './assets/img/6.png'
+            },
+            {
+                name: 'Bai 7',
+                singer: 'singer 7',
+                path: './assets/music/InfectiousTobu.mp3',
+                img: './assets/img/7.jpg'
+            },
+            {
+                name: 'Bai 8',
+                singer: 'singer 8',
+                path: './assets/music/JackpotTheFatRat.mp3',
+                img: './assets/img/8.jpg'
+            },
+            {
+                name: 'Bai 9',
+                singer: 'singer 9',
+                path: './assets/music/LifeTobu.mp3',
+                img: './assets/img/9.jpg'
+            },
+            {
+                name: 'Bai 10',
+                singer: 'singer 10',
+                path: './assets/music/MonodyTheFatRat_LauraBrehm.mp3',
+                img: './assets/img/10.jpg'
+            },
+            {
+                name: 'Bai 11',
+                singer: 'singer 11',
+                path: './assets/music/NeverBeAloneTheFatRat.mp3',
+                img: './assets/img/11.jpg'
+            },
+            {
+                name: 'Bai 12',
+                singer: 'singer 12',
+                path: './assets/music/ShinePentagon.mp3',
+                img: './assets/img/12.jpg'
+            },
+            {
+                name: 'Bai 13',
+                singer: 'singer 13',
+                path: './assets/music/SpectreMashup_AlanWalker.mp3',
+                img: './assets/img/13.jpg'
+            },
+            {
+                name: 'Bai 14',
+                singer: 'singer 14',
+                path: './assets/music/SunburstTobu_Itro.mp3',
+                img: './assets/img/14.jpg'
+            },
+            {
+                name: 'Bai 15',
+                singer: 'singer 16',
+                path: './assets/music/UnityAlanWalker.mp3',
+                img: './assets/img/15.jpeg'
+            },
+            {
+                name: 'Bai 16',
+                singer: 'singer 16',
+                path: './assets/music/WindfallTheFatRat.mp3',
+                img: './assets/img/16.jpg'
+            },
+            {
+                name: 'Bai 17',
+                singer: 'singer 17',
+                path: './assets/music/NeverBeAloneTheFatRat.mp3',
+                img: './assets/img/17.jpg'
+            },
+
+        ],
+        render: function () {
+            let songsArray = this.songs.map((song) => {
+                return `<div class="song">
+                          <div class="thumb" style="background-image: url('${song.img}')">
+                          </div>
+                          <div class="body">
+                            <h3 class="title">${song.name}</h3>
+                            <p class="author">${song.singer}</p>
+                          </div>
+                          <div class="option">
+                            <i class="fas fa-ellipsis-h"></i>
+                          </div>
+                      </div>
+                    `;
+            });
+            playlist.innerHTML = songsArray.join('');
+        },
+        /* Xử lý các sự kiện */
+        handleEvents: function () {
+            const _this = this;
+            /* Xử lý khi scroll trình duyệt */
+            const cdWidth = cd.offsetWidth;
+            document.onscroll = function () {
+                let scrollTop = window.scrollY || document.documentElement.scrollTop;
+                let newCdWith = (cdWidth - scrollTop) > 0 ? (cdWidth - scrollTop) : 0;
+                cd.style.width = newCdWith + 'px';
+                cd.style.opacity = newCdWith / cdWidth;
+            }
+            /* Xử lý khi click vào nút play */
+            playBtn.onclick = function () {
+                _this.isPlaying = !_this.isPlaying;
+                $('.player').classList.toggle('playing');
+                $('.player').classList.contains('playing') ? audio.play() : audio.pause();
+            }
+        },
+        /* Định nghĩa các thuộc tính của đối tượng */
+        defineProperties: function () {
+            /* Khi định nghĩa bằng defineProperty thì không thể load bằng các vòng for và k thể xóa hoặc thay đổi thuộc tính nếu k cho phép */
+            Object.defineProperty(this, 'currentSong', {
+                get: function () {
+                    return this.songs[this.currentIndex];
+                }
+            });
+        },
+        loadCurrentSong: function () {
+            $('header h4').innerText = `Now Playing : ${this.currentSong.name}`;
+            $('header h2').innerText = `${this.currentSong.singer}`;
+            cdThumb.style.backgroundImage = `url('${this.currentSong.img}')`;
+            audio.src = this.currentSong.path;
+        },
+        start() {
+            this.render();
+            this.handleEvents();
+            this.defineProperties();
+            this.loadCurrentSong();
+        },
+    }
+    app.start();
+</script>
+</body>
+</html>
